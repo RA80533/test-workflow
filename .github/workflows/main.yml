@@ -10,7 +10,7 @@ on:
 
 jobs:
   
-  install:
+  build:
     
     runs-on: ${{ matrix.os }}
     
@@ -28,12 +28,26 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-  
-  build:
-    
-    runs-on: ubuntu-latest
-    
-    steps:
       
-      - name: "Checkout"
-        uses: actions/checkout@v2
+      - name: "Get path to Yarn cache directory"
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      
+      - name: "Cache node_modules"
+        id: yarn-cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      
+      - name: "Install dependencies"
+        run: |
+          yarn --frozen-lockfile
+      
+      - name: "Apply patches"
+        env:
+          DEBUG: true
+        run: |
+          yarn patch
