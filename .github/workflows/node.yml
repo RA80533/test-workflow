@@ -1,6 +1,6 @@
-# continuous-integration.yml
+# node.yml
 
-name: "Continuous integration"
+name: "Node.js CI"
 
 on:
   push:
