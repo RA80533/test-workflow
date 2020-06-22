@@ -1,5 +1,7 @@
 # continuous-integration.yml
 
+name: "Continuous integration"
+
 on:
   push:
     branches: [ master ]
